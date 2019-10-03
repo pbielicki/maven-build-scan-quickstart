@@ -25,7 +25,7 @@ static void tagOs(def api) {
 }
 
 void tagIde(def api) {
-    if (project.properties.property('android.injected.invoked.from.ide')) {
+    if (project.properties.hasProperty('android.injected.invoked.from.ide')) {
         api.tag 'Android Studio'
     } else if (System.getProperty('idea.version')) {
         api.tag 'IntelliJ IDEA'
