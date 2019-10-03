@@ -25,7 +25,7 @@ static void tagOs(def api) {
 }
 
 void tagIde(def api) {
-    if (project.getProperties().contains('android.injected.invoked.from.ide')) {
+    if (project.properties.property('android.injected.invoked.from.ide')) {
         api.tag 'Android Studio'
     } else if (System.getProperty('idea.version')) {
         api.tag 'IntelliJ IDEA'
@@ -60,18 +60,17 @@ void addCiMetadata(def api) {
         }
     }
 
-    println properties
     if (isTeamCity()) {
-        if (System.getenv('SERVER_URL') && project.hasProperty('teamcity.agent.dotnet.build_id')) {
+        if (System.getenv('SERVER_URL') && properties.property('teamcity.agent.dotnet.build_id')) {
             def teamCityServerUrl = System.getenv('SERVER_URL')
-            def teamCityBuildId = project.property('teamcity.agent.dotnet.build_id')
+            def teamCityBuildId = properties.property('teamcity.agent.dotnet.build_id')
             api.link 'TeamCity build', "${appendIfMissing(teamCityServerUrl, "/")}viewLog.html?buildId=${teamCityBuildId}"
         }
         if (System.getenv('BUILD_NUMBER')) {
             api.value 'CI build number', System.getenv('BUILD_NUMBER')
         }
-        if (project.hasProperty('agent.name')) {
-            def agentName = project.property('agent.name')
+        if (properties.property('agent.name')) {
+            def agentName = properties.property('agent.name')
             api.tag agentName
             api.value 'CI agent name', agentName
         }
