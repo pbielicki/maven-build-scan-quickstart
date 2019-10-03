@@ -24,10 +24,8 @@ static void tagOs(def api) {
     api.tag System.getProperty('os.name')
 }
 
-void tagIde(def api) {
-    if (project.properties.hasProperty('android.injected.invoked.from.ide')) {
-        api.tag 'Android Studio'
-    } else if (System.getProperty('idea.version')) {
+static void tagIde(def api) {
+    if (System.getProperty('idea.version')) {
         api.tag 'IntelliJ IDEA'
     } else if (System.getProperty('eclipse.buildId')) {
         api.tag 'Eclipse'
@@ -38,13 +36,18 @@ static void tagCiOrLocal(def api) {
     api.tag(isCi() ? 'CI' : 'LOCAL')
 }
 
-void addCiMetadata(def api) {
+static void addCiMetadata(def api) {
     if (isJenkins()) {
         if (System.getenv('BUILD_URL')) {
             api.link 'Jenkins build', System.getenv('BUILD_URL')
         }
         if (System.getenv('BUILD_NUMBER')) {
             api.value 'CI build number', System.getenv('BUILD_NUMBER')
+        }
+        if (System.getenv('NODE_NAME')) {
+            def agentName = System.getenv('NODE_NAME') == 'master' ? 'master-node' : System.getenv('NODE_NAME')
+            api.tag agentName
+            api.value 'CI node name', agentName
         }
         if (System.getenv('JOB_NAME')) {
             def jobNameLabel = 'CI job'
@@ -119,7 +122,7 @@ static void addGitMetadata(def api) {
             addCustomValueSearchLink bck, 'Git commit id build scans', [(commitIdLabel): gitCommitId]
             def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
             if (originUrl.contains('github.com')) { // only for GitHub
-                def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*).git/)[0][2]
+                def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*)(.git)?/)[0][2]
                 bck.link 'Github Source', "https://github.com/$repoPath/tree/" + gitCommitId
             }
         }
@@ -139,7 +142,7 @@ static boolean isCi() {
 }
 
 static boolean isJenkins() {
-    System.getenv('BUILD_URL')
+    System.getenv('JENKINS_URL')
 }
 
 static boolean isTeamCity() {
