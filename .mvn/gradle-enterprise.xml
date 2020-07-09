@@ -1,0 +1,11 @@
+<gradleEnterprise>
+  <buildScan>
+    <termsOfService>
+      <!-- Address of the terms of service. Must be 'https://gradle.com/terms-of-service'. Defaults to an empty string. -->
+      <url>https://gradle.com/terms-of-service</url>
+      <!-- Signal acceptance of the terms of service. Must be 'true'. Defaults to false. -->
+      <accept>true</accept>
+    </termsOfService>
+    <publish>ALWAYS</publish>
+  </buildScan>
+</gradleEnterprise>
